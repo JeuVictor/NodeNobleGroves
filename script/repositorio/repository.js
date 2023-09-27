@@ -1,7 +1,7 @@
 import admin from 'firebase-admin';
 
 export class ComprasRepositorio{
-     findByUserId(uid){
+     findByUserUid(uid){
         return admin.firestore()
         .collection('comprasProduto')
         .where('user.uid', '==', uid)

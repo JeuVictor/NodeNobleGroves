@@ -1,7 +1,7 @@
-import admin from 'firebase-admin';
+import { UserNotInformedError } from '../../errors/user-not-informed-error.js';
 import { ComprasRepositorio } from '../repositorio/repository.js';
 
-export class Produto{
+export class Produto {
     id;
     idBtn;
     idBtnOk;
@@ -12,18 +12,15 @@ export class Produto{
     quantidade;
     type;
     #repositorio;
-    constructor(){
-        this.#repositorio = new ComprasRepositorio();
+    constructor(produtoRespositorio){
+        this.#repositorio = produtoRespositorio || new ComprasRepositorio();
     }
 
     findByUser() {
         if(!this.user?.uid){
-            return Promise.reject({
-                code: 500,
-                message: "Usuario não informado"
-            })
+            return Promise.reject(new UserNotInformedError())
         }
-        return this.#repositorio.findByUserId(this.user.uid);
+        return this.#repositorio.findByUserUid(this.user.uid);
 
     }
 

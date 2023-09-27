@@ -2,14 +2,19 @@
 import { Produto } from '../model/model.js'
 
 export class ComprasController {
-    findByUser(request, response){
-        const compra = new Produto();
-        compra.user = request.user;
 
-        compra.findByUser().then(produtos =>{
+    #compra
+    constructor (compra){
+        this.#compra = compra || new Produto();
+    }
+
+    findByUser(request, response){
+        this.#compra.user = request.user;
+
+        return this.#compra.findByUser().then(produtos =>{
             response.json(produtos);
-        }).catch(error =>{
-            response.status(error.code).json
+        }).catch(error => {
+             response.status(error.code).json(error);
         })
         
     }
