@@ -1,10 +1,13 @@
-import express from "express";
+import express  from "express";
+import admin from 'firebase-admin';
 import {authenticateToken}  from "../middlewares/authanticate-jwt.js";
 import { ComprasController } from "../controller/controllerCompra.js";
 
 const app = express()
 const compraController = new  ComprasController();
 
-app.get('/', authenticateToken, compraController.findByUser);
+app.get('/', 
+    (request, response, next) => authenticateToken(request, response, next, admin.auth()), 
+    (request, response) => compraController.findByUser(request, response));
 
 export const comprasRoutes = app;
