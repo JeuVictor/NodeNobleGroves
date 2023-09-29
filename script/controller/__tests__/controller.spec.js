@@ -38,6 +38,48 @@ describe('Compras controller', () =>{
         })
     })
 
+    describe('given find compra by uid', ()=>{
+
+        test('given sucess, then return status 200', async ()=>{
+            const controller = new ComprasController({
+                findByUid: () => Promise.resolve()
+            });
+            
+            const request = {params: {uid: 1}};
+            const response = new ResponseMock();
+            await controller.findByUid(request, response);
+
+            expect (response._status).toEqual(200);
+
+        })
+        test('given sucess, then return compra', async ()=>{
+            const compra = {
+                findByUid: () => Promise.resolve()
+            }
+            const controller = new ComprasController(compra);
+            
+            const request = {params: {uid: 1}};
+            const response = new ResponseMock();
+            await controller.findByUid(request, response);
+
+            expect (response._json).toEqual(compra);
+
+        })
+
+        test('when fail, then return error status', async () =>{
+            const controller = new ComprasController({
+                findByUid: () => Promise.reject({ code: 500})
+            });
+            
+            const request = {params: {uid: 1}};
+            const response = new ResponseMock();
+            await controller.findByUid(request, response);
+
+            expect (response._json).toEqual({code: 500});
+
+        } )
+    })
+
     class ResponseMock{
         _json = null;
         _status = null;

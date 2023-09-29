@@ -13,4 +13,12 @@ export class ComprasRepositorio{
             }))
         })
      }
+     
+    findByUid(uid){
+        return admin.firestore()
+            .collection('comprasProduto')
+            .doc(uid)
+            .get()
+            .then(snapshot => snapshot.data());
+        }
 }

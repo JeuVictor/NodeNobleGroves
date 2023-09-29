@@ -2,6 +2,7 @@
 import { ProdutoNaoEncontrado } from "../../../errors/produto-Nao-Encontrado-error.js";
 import { ProdutoUidNaoInformado } from "../../../errors/produto-uid-not-informed-error.js";
 import { UserNotInformedError } from "../../../errors/user-not-informed-error.js";
+import { UsuarioNaoFezCompra } from "../../../errors/usuario-nao-fez-compra-error.js";
 
 import { Produto } from "../model.js";
 
@@ -42,17 +43,33 @@ describe("Produto model, dado encontrar usuário por uid, quando o usuário: ", 
     });
 
     describe ('given find transaction by uid', ()=>{
+
         test('then return transaction', async ()=>{
             
             const model = new Produto({
                 findByUid: () => Promise.resolve(criandoCompra())
             });
             model.uid = 1;
+            model.user = {uid: "anyUserUid"};
 
             await model.findByUid();
             
 
             expect(model).toEqual(criandoCompra());
+        })
+
+        test('when user doesnt onw transaction, then return 403 error ', async () => {
+
+            const comprasDb = criandoCompra();
+            comprasDb.user = {uid: "anyOtherUserUid"}
+
+            const model = new Produto({
+                findByUid: () => Promise.resolve(comprasDb)
+            });
+            model.uid = 9;
+            model.user = {uid: "anyUserUid"};
+
+            await expect(model.findByUid()).rejects.toBeInstanceOf(UsuarioNaoFezCompra);
 
         })
 
@@ -73,26 +90,75 @@ describe("Produto model, dado encontrar usuário por uid, quando o usuário: ", 
             await expect(model.findByUid()).rejects.toBeInstanceOf(ProdutoNaoEncontrado);
         })
 
-        function criandoCompra(){
-            
-            const produto = new Produto();
-            produto.uid =1;
-            produto.id = 20;
-            produto.idBtn =  300;
-            produto.medida = 'kg';
-            produto.nome = 'Café';
-            produto.preco = {
-                custo: 59.99,
-                moeda: "R$"
-            }
-            produto.promo = false;
-            produto.quantidade = 1;
-            produto.type ='oferta centralizar bebida'
-            produto.user = {
+        
+    })
+
+    describe ('given create new buy', ()=>{
+
+        const params = {
+            id: 1,
+            idBtn:  20,
+            idBtnOk: 300,
+            medida: 'anyKg',
+            nome: 'anyName',
+            preco: {
+                custo: 1,
+                moeda: "anymoeda"
+            },
+            promo: false,
+            quantidade: 1,
+            type: 'oferta centralizar bebida',
+            user: {
                 uid: "anyUserUid"
             }
-            return produto
-        }
+        };
+        const repositoryMock = {
+            _hasSaved: false,
+            save() {
+                this._hasSaved = true;
+                return Promise.resolve({uid: 1})
+            }
+           }
+
+        test('then return new buy', async ()=>{
+            const model = new Produto(repositoryMock);
+
+            await model.create(params);
+
+            const novaCompra = criandoCompra();
+
+            expect(model).toEqual(novaCompra);
+        })
+        test('then save buy', async ()=>{
+           
+            const model = new Produto(repositoryMock)
+
+            await model.create(params)
+
+            expect(repositoryMock._hasSaved).toBeTruthy();
+        })
     })
+
+    function criandoCompra(){
+            
+        const produto = new Produto();
+        produto.uid =1;
+        produto.id = 1;
+        produto.idBtn =  20;
+        produto.idBtnOk = 300
+        produto.medida = 'anyKg';
+        produto.nome = 'anyName';
+        produto.preco = {
+            custo: 1,
+            moeda: "anymoeda"
+        }
+        produto.promo = false;
+        produto.quantidade = 1;
+        produto.type ='oferta centralizar bebida'
+        produto.user = {
+            uid: "anyUserUid"
+        }
+        return produto
+    }
 
 });

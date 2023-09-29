@@ -1,6 +1,8 @@
+import { response } from 'express';
 import { ProdutoNaoEncontrado } from '../../errors/produto-Nao-Encontrado-error.js';
 import { ProdutoUidNaoInformado } from '../../errors/produto-uid-not-informed-error.js';
 import { UserNotInformedError } from '../../errors/user-not-informed-error.js';
+import { UsuarioNaoFezCompra } from '../../errors/usuario-nao-fez-compra-error.js';
 import { ComprasRepositorio } from '../repositorio/repository.js';
 
 export class Produto {
@@ -31,8 +33,11 @@ export class Produto {
             return Promise.reject(new ProdutoUidNaoInformado())
         }
         return this.#repositorio.findByUid(this.uid).then(produtoDb =>{
-            if(!produtoDb){
+        if(!produtoDb){
                 return Promise.reject(new ProdutoNaoEncontrado());
+            }
+        if(this.user.uid != produtoDb.user.uid){
+                return Promise.reject(new UsuarioNaoFezCompra() );
             }
             this.id = produtoDb.id
             this.idBtn = produtoDb.idBtn;
@@ -46,5 +51,21 @@ export class Produto {
             this.user = produtoDb.user;
         })
     };
+    create(params){
+        this.id = params.id
+        this.idBtn = params.idBtn;
+        this.idBtnOk = params.idBtnOk;
+        this.medida = params.medida;
+        this.nome = params.nome;
+        this.preco = params.preco
+        this.promo = params.promo;
+        this.quantidade = params.quantidade;
+        this.type = params.type;
+        this.user = params.user;
+        
+        return this.#repositorio.save(this).then( response =>{
+            this.uid = response.uid;
+        })
+    }
 
 }
