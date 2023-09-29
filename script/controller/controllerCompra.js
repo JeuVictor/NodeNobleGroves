@@ -29,4 +29,14 @@ export class ComprasController {
         })
         
     }
+    create(request, response){
+        this.#compra.user = request.user
+
+        return this.#compra.create(request.body).then(()=>{
+            response.status(200).json(this.#compra)
+        }).catch(error =>{
+            response.status(error.code).json(error)
+        })
+
+    }
 }

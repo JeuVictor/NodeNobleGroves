@@ -79,11 +79,71 @@ describe('Compras controller', () =>{
 
         } )
     })
+    describe('given create new buy', () => {
 
-    class ResponseMock{
-        _json = null;
-        _status = null;
-        json(value){
+            test('when success, then return status 200', async ()=>{
+                const controller = new ComprasController({
+                    create: () => Promise.resolve()
+                });
+                const request = {body: {}};
+                const response = new ResponseMock();
+
+                await controller.create(request, response);
+
+                expect(response._status).toEqual(200)
+            })
+            test('when success, then return buy', async ()=>{
+                const compra = {
+                    create: () => Promise.resolve()
+                }
+                const controller = new ComprasController(compra);
+                const request = {body: {}};
+                const response = new ResponseMock();
+                
+                await controller.create(request, response);
+                
+                expect(response._json).toEqual(compra)
+            })
+            test('then buy should belong to user on request', async ()=>{
+                const compra = {
+                    create: () => Promise.resolve()
+                }
+                const controller = new ComprasController(compra);
+                const request = {body: {}, user: {uid: "anyUserUid"}};
+                const response = new ResponseMock();
+
+                await controller.create(request, response);
+                
+                expect(response._json.user).toEqual({uid: "anyUserUid"})
+            })
+            test('when fail, then return error status 500', async ()=>{
+                const controller = new ComprasController({
+                    create: () => Promise.reject({code: 500})
+                });
+                const request = {body: {}};
+                const response = new ResponseMock();
+    
+                await controller.create(request, response);
+    
+                expect(response._status).toEqual(500)
+            })
+            test('when fail, then return error', async ()=>{
+                const controller = new ComprasController({
+                    create: () => Promise.reject({code: 500})
+                });
+                const request = {body: {}};
+                const response = new ResponseMock();
+    
+                await controller.create(request, response);
+    
+                expect(response._json).toEqual({code: 500})
+            })
+        })
+        
+        class ResponseMock{
+            _json = null;
+            _status = null;
+            json(value){
             this._json = value;
         }
         status(value){

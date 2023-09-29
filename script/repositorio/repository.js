@@ -1,3 +1,4 @@
+import { json, response } from 'express';
 import admin from 'firebase-admin';
 
 export class ComprasRepositorio{
@@ -21,4 +22,10 @@ export class ComprasRepositorio{
             .get()
             .then(snapshot => snapshot.data());
         }
+    save(compra){
+        return admin.firestore()
+            .collection('comprasProduto')
+            .add(JSON.parse(JSON.stringify(compra)))
+            .then(response => ({uid: response.uid}));
+    }    
 }
