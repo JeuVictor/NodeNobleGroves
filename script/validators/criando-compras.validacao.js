@@ -12,5 +12,7 @@ export function criandoComprasValidas(request, response, next){
     if(isNaN(qtd)){
         return response.status(400).json(new badRequestError('Quantidade invalida'))
     }
+
+    next();
 }
  

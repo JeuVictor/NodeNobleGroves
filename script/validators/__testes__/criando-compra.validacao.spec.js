@@ -62,6 +62,15 @@ describe('Create buy validator', ()=>{
         expect(response._json).toBeInstanceOf(badRequestError)
     })
 
+    test('given buy is valid, then go to next stop', ()=>{
+        let hasCalledNext = false;
+        const next = () => { hasCalledNext = true};
+
+        criandoComprasValidas(request, response, next)
+
+        expect(hasCalledNext).toBeTruthy();
+    })
+
     class ResponseMock{
         _json = null;
         _status = null;

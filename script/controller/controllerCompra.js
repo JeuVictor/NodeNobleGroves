@@ -39,4 +39,16 @@ export class ComprasController {
         })
 
     }
+
+    update(request, response){
+        this.#compra.uid = request.params.uid
+        this.#compra.user = request.user;
+
+        return this.#compra.update(request.body).then(()=>{
+            
+            response.status(200).json(this.#compra)
+        }).catch(error =>{
+                response.status(error.code).json(error);
+        });
+    }
 }

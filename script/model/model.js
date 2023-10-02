@@ -52,6 +52,8 @@ export class Produto {
         })
     };
     create(params){
+        
+
         this.id = params.id
         this.idBtn = params.idBtn;
         this.idBtnOk = params.idBtnOk;
@@ -67,5 +69,25 @@ export class Produto {
             this.uid = response.uid;
         })
     }
+
+    update(params){
+        return this.findByUid(this.uid).then(() =>{
+           
+            this.id = params.id
+            this.idBtn = params.idBtn;
+            this.idBtnOk = params.idBtnOk;
+            this.medida = params.medida;
+            this.nome = params.nome;
+            this.preco = params.preco
+            this.promo = params.promo;
+            this.quantidade = params.quantidade;
+            this.type = params.type;
+            this.user = params.user;
+            
+            return this.#repositorio.update(this);
+        })
+
+
+    };
 
 }

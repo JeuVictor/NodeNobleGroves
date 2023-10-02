@@ -139,6 +139,71 @@ describe("Produto model, dado encontrar usuário por uid, quando o usuário: ", 
         })
     })
 
+    describe('given update buy', ()=>{
+        let repositoryMock;
+        
+        beforeEach(()=>{
+            repositoryMock = {
+                _hasUpdate: false,
+                findByUid(){
+                    return Promise.resolve({user: {uid: "anyUserUid"}})
+                } ,
+                update(){
+                    this._hasUpdate =  true;
+                    return Promise.resolve();
+                }
+            }
+        })
+
+        test('then return update buy', async ()=>{
+            
+            const model = new Produto(repositoryMock);
+            model.uid =1;
+            model.user = {uid: 'anyUserUid'};
+            const updateCompra = criandoCompra();
+
+            const params = criandoCompra();
+            await model.update(params);
+            
+            expect(model).toEqual(updateCompra);
+        })
+        test('then update buy', async ()=>{
+            
+            const model = new Produto(repositoryMock);
+            model.uid =1;
+            model.user = {uid: 'anyUserUid'};
+
+            const params = criandoCompra();
+            await model.update(params);
+            
+            expect(repositoryMock._hasUpdate).toBeTruthy();
+        })
+        test('when transaction doesnt belong to user, then return error', async ()=>{
+            
+            const model = new Produto({
+                findByUid: () => Promise.resolve({user: {uid: "anyOtherUserUid"}})
+            });
+            model.uid =1;
+            model.user = {uid: 'anyUserUid'};
+
+            const params = criandoCompra();
+            
+            await expect(model.update(params)).rejects.toBeInstanceOf(UsuarioNaoFezCompra)
+        })
+        test('when transaction doesnt exist, then return not found error', async ()=>{
+            
+            const model = new Produto({
+                findByUid: () => Promise.resolve(null)
+            });
+            model.uid =1;
+            model.user = {uid: 'anyUserUid'};
+
+            const params = criandoCompra();
+            
+            await expect(model.update(params)).rejects.toBeInstanceOf(ProdutoNaoEncontrado)
+        })
+    })
+
     function criandoCompra(){
             
         const produto = new Produto();

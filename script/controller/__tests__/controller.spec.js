@@ -139,6 +139,83 @@ describe('Compras controller', () =>{
                 expect(response._json).toEqual({code: 500})
             })
         })
+
+        describe('given update transaction', ()=>{
+            const user = {uid: "anyUserUid"}
+            const request = { params: {uid: 1}, user};
+            let response;
+            let model;
+
+            beforeEach(() =>{
+                response = new ResponseMock();
+                model = {
+                    _HasUpdated: false,
+                    update(){
+                        this._HasUpdated = true;
+                        return Promise.resolve();
+                    }
+                }
+            })
+
+            test('when success, then return status 200 ', async ()=>{
+                const controller = new ComprasController(model);
+
+                await controller.update(request, response)
+
+                expect(response._status).toEqual(200)
+
+            })
+            test('when success, then return updated buy ', async ()=>{
+                const controller = new ComprasController(model);
+
+                await controller.update(request, response)
+
+                expect(response._json).toEqual(model)
+
+            })
+            test('then buy should belong to user on request', async ()=>{
+                const controller = new ComprasController(model);
+
+                await controller.update(request, response)
+
+                expect(response._json.user).toEqual(user)
+
+            })
+            test('then buy should have uid from request', async ()=>{
+                const controller = new ComprasController(model);
+
+                await controller.update(request, response)
+
+                expect(response._json.uid).toEqual(1)
+
+            })
+            test('then update buy', async ()=>{
+                const controller = new ComprasController(model);
+
+                await controller.update(request, response)
+
+                expect(model._HasUpdated).toBeTruthy();
+
+            })
+            test('when fail, then return error status', async ()=>{
+                const controller = new ComprasController({
+                    update: () => Promise.reject({code: 500}) 
+                });
+                await controller.update(request, response)
+
+                expect(response._status).toEqual(500)
+
+            })
+            test('when fail, then return error', async ()=>{
+                const controller = new ComprasController({
+                    update: () => Promise.reject({code: 500}) 
+                });
+                await controller.update(request, response)
+
+                expect(response._json).toEqual({code: 500})
+
+            })
+        })
         
         class ResponseMock{
             _json = null;
