@@ -204,6 +204,49 @@ describe("Produto model, dado encontrar usuário por uid, quando o usuário: ", 
         })
     })
 
+    describe('geven delete transaction', ()=>{
+
+            let repositoryMock;
+
+            beforeEach(()=>{
+                repositoryMock = {
+                    _hasDelete: false,
+                    delete() {
+                        this._hasDelete = true;
+                        return Promise.resolve();
+                    },
+                    findByUid(){
+                        return Promise.resolve({user: {uid: "anyUserUid"}});
+                    }
+                }
+            })
+
+        test('when success, then delete buy', async ()=>{
+            const model = new Produto(repositoryMock);
+            model.user = {uid: "anyUserUid"};
+            model.uid = "anyUid";
+            await model.delete();
+
+            expect(repositoryMock._hasDelete).toBeTruthy();
+        })
+        test('when buy doenst belong to user, then return error', async ()=>{
+            const model = new Produto(repositoryMock);
+            model.user = {uid: "anyOtherUserUid"}
+            model.uid = "anyUid"
+
+            await expect(model.delete()).rejects.toBeInstanceOf(UsuarioNaoFezCompra);
+        })
+        test('when buy doenst exist, then return error', async ()=>{
+            const model = new Produto({
+                findByUid: () => Promise.resolve(null)
+            });
+            model.user = {uid: "anyOtherUserUid"}
+            model.uid = "anyUid"
+
+            await expect(model.delete()).rejects.toBeInstanceOf(ProdutoNaoEncontrado);
+        })
+    })
+
     function criandoCompra(){
             
         const produto = new Produto();

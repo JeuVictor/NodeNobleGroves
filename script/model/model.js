@@ -86,8 +86,13 @@ export class Produto {
             
             return this.#repositorio.update(this);
         })
-
-
     };
+
+    delete(){
+        return this.findByUid().then(() =>{
+            
+            return this.#repositorio.delete(this)
+        })
+    }
 
 }

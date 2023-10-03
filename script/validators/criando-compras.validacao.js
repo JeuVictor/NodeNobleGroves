@@ -1,6 +1,6 @@
-import { badRequestError } from "../../errors/bad-request-error";
+import { badRequestError } from "../../errors/bad-request-error.js";
 
-export function criandoComprasValidas(request, response, next){
+export function validandoCompras(request, response, next){
     const id = request.body.id;
     const qtd = request.body.quantidade;
     if (!id){

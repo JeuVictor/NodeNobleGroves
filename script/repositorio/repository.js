@@ -28,4 +28,24 @@ export class ComprasRepositorio{
             .add(JSON.parse(JSON.stringify(compra)))
             .then(response => ({uid: response.uid}));
     }    
+    update(compra){
+        return admin.firestore()
+                .collection('comprasProduto')
+                .doc(compra.uid)
+                .update({
+                    preco: compra.preco,
+                    medida: compra.medida,
+                    nome: compra.nome,
+                    id: compra.id,
+                    type: compra.type,
+                    quantidade: compra.quantidade
+                })
+    }
+
+    delete(compra){
+        return admin.firestore()
+            .collection('comprasProduto')
+            .doc(compra.uid)
+            .delete();
+    }
 }

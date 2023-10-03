@@ -1,5 +1,5 @@
 import { badRequestError } from "../../../errors/bad-request-error";
-import { criandoComprasValidas } from "../criando-compras.validacao"
+import { validandoCompras } from "../criando-compras.validacao"
 
 describe('Create buy validator', ()=>{
 
@@ -22,34 +22,34 @@ describe('Create buy validator', ()=>{
     test('given id not informed, then return 400 error', () =>{
         request.body.id = null
         
-        criandoComprasValidas(request, response);
+        validandoCompras(request, response);
 
         expect(response._status).toEqual(400)
     })
     test('given id not informed, then return error', () =>{
         request.body.id = null
         
-        criandoComprasValidas(request, response);
+        validandoCompras(request, response);
 
         expect(response._json).toBeInstanceOf(badRequestError)
     })
 
     test('given qtd not informed, then return 400 error', () =>{
         request.body.quantidade = null;
-        criandoComprasValidas(request, response);
+        validandoCompras(request, response);
 
         expect(response._status).toEqual(400)
     })
     test('given qtd not informed, then return error', () =>{
         request.body.quantidade = null;
-        criandoComprasValidas(request, response);
+        validandoCompras(request, response);
 
         expect(response._json).toBeInstanceOf(badRequestError)
     })
 
     test('given qtd not informed, then return 400 error', () =>{
         request.body.quantidade = 'quantidaInvalida';
-        criandoComprasValidas(request, response);
+        validandoCompras(request, response);
 
         expect(response._status).toEqual(400)
     })
@@ -57,7 +57,7 @@ describe('Create buy validator', ()=>{
     
     test('given qtd not informed, then return error', () =>{
         request.body.quantidade = 'quantidaInvalida';
-        criandoComprasValidas(request, response);
+        validandoCompras(request, response);
 
         expect(response._json).toBeInstanceOf(badRequestError)
     })
@@ -66,7 +66,7 @@ describe('Create buy validator', ()=>{
         let hasCalledNext = false;
         const next = () => { hasCalledNext = true};
 
-        criandoComprasValidas(request, response, next)
+        validandoCompras(request, response, next)
 
         expect(hasCalledNext).toBeTruthy();
     })

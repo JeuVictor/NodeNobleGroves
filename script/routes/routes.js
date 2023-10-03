@@ -2,27 +2,33 @@ import express  from "express";
 import admin from 'firebase-admin';
 import {authenticateToken}  from "../middlewares/authanticate-jwt.js";
 import { ComprasController } from "../controller/controllerCompra.js";
-import { criandoComprasValidas } from "../validators/criando-compras.validacao.js";
+import { validandoCompras } from "../validators/criando-compras.validacao.js";
 
 const app = express()
-const compraController = new  ComprasController();
 
 app.get('/', 
     (request, response, next) => authenticateToken(request, response, next, admin.auth()), 
-    (request, response) => compraController.findByUser(request, response)
+    (request, response) =>  new ComprasController().findByUser(request, response)
     );
 app.get('/:uid',
     (request, response, next) => authenticateToken(request, response, next, admin.auth()), 
-    (request, response) => compraController.findByUid(request, response)
+    (request, response) =>  new ComprasController().findByUid(request, response)
 );    
 app.post('/',
 
-    (request, response, next) => criandoComprasValidas(request, response, next),
+    (request, response, next) => validandoCompras(request, response, next),
     (request, response, next) => authenticateToken(request, response, next, admin.auth()),
-    (request, response) => compraController.create(request, response)
+    (request, response) =>  new ComprasController().create(request, response)
     );
+    
 app.patch('/:uid',
+    (request, response, next) => validandoCompras(request, response, next),
     (request, response, next) => authenticateToken(request, response, next, admin.auth()),
-    (request, response) => compraController.update(request, response)
+    (request, response) => new CompraController().update(request, response)
     )
+app.delete('/:uid',
+    (request, response, next) => authenticateToken(request, response, next, admin.auth()),
+    (request, response) => new ComprasController().delete(request, response)
+
+    )    
 export const comprasRoutes = app;
