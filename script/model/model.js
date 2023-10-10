@@ -16,7 +16,9 @@ export class Produto {
     quantidade;
     type;
     user;
+
     #repositorio;
+
     constructor(produtoRespositorio){
         this.#repositorio = produtoRespositorio || new ComprasRepositorio();
     }
@@ -82,7 +84,6 @@ export class Produto {
             this.promo = params.promo;
             this.quantidade = params.quantidade;
             this.type = params.type;
-            this.user = params.user;
             
             return this.#repositorio.update(this);
         })

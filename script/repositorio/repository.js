@@ -1,4 +1,4 @@
-import { json, response } from 'express';
+
 import admin from 'firebase-admin';
 
 export class ComprasRepositorio{
@@ -47,5 +47,26 @@ export class ComprasRepositorio{
             .collection('comprasProduto')
             .doc(compra.uid)
             .delete();
+    }
+}
+export class CatalogoRepositorio{
+    findByUid (uid){
+        return admin.firestore()
+            .collection('produtos')
+            .orderBy('type', 'asc')
+            .get()
+            .then(snapshot=>{
+                return snapshot.docs.map(doc=>({
+                    ...doc.data(),
+                    uid: doc.id
+                }))
+            })
+    }
+    findByUidData (uid){
+        return admin.firestore()
+            .collection('produtos')
+            .doc(uid)
+            .get()
+            .then(snapshot => snapshot.data());
     }
 }

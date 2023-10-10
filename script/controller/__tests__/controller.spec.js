@@ -283,6 +283,7 @@ describe('Compras controller', () =>{
             })
         })
         
+        
         class ResponseMock{
             _json = null;
             _status = null;
