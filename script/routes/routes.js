@@ -1,4 +1,4 @@
-import express, { response }  from "express";
+import express  from "express";
 import admin from 'firebase-admin';
 import {authenticateToken}  from "../middlewares/authanticate-jwt.js";
 import { ComprasController } from "../controller/controllerCompra.js";
@@ -33,6 +33,7 @@ app.delete('/:uid',
     (request, response) => new ComprasController().delete(request, response)
 
     )    
+    
 export const comprasRoutes = app;
 
     appC.get('/', 
